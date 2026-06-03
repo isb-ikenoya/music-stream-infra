@@ -1,6 +1,6 @@
 module "global_variables" {
   // 共通で使用する定数
-  source = "../../modules/global-variables"
+  source = "../../modules/global-variables/"
 }
 
 locals {
@@ -10,6 +10,6 @@ locals {
 }
 
 module "dynamo-db" {
-  source = "../../modules/dynamodb"
+  source = "../../modules/dynamodb/"
   owner  = local.owner
 }
