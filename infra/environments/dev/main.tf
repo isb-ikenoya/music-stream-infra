@@ -1,6 +1,6 @@
 module "global_variables" {
   // 共通で使用する定数
-  source = "../../modules/grobal-variables/"
+  source = "../../modules/global-variables"
 }
 
 locals {
