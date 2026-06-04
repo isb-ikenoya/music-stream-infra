@@ -48,13 +48,13 @@ locals {
 }
 
 # テーブルアイテムの初期データ
-resource "aws_dynamodb_table_item" "initial_data" {
+resource "aws_dynamodb_table_item" "initial_songs_data" {
   for_each = local.initial_songs_data
 
   table_name = aws_dynamodb_table.music_tracks.name
   hash_key   = aws_dynamodb_table.music_tracks.hash_key
 
-  item = <<ITEM
+  item = <<-ITEM
   {
     "songId": {"S": "${each.key}"},
     "songName": {"S": "${each.value.songName}"},
