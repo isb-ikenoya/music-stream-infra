@@ -29,3 +29,19 @@ resource "aws_dynamodb_table" "music_tracks" {
     "created_by" = var.owner
   }
 }
+
+# テーブルアイテムの初期データ
+resource "aws_dynamodb_table_item" "initial_data" {
+  table_name = aws_dynamodb_table.music_tracks.name
+  hash_key   = aws_dynamodb_table.music_tracks.hash_key
+
+  item = <<ITEM
+  {
+    "songId": {"S": "song_000001"},
+    "songName": {"S": "Test Song"},
+    "artistId": {"S": "artist_000001"},
+    "audioS3Key": {"S": "tracks/system/test.mp3"},
+    "durationSeconds": {"N": "180"}
+  }
+  ITEM
+}
