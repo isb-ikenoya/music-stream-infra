@@ -63,4 +63,8 @@ resource "aws_dynamodb_table_item" "initial_songs_data" {
     "durationSeconds": {"N": "${each.value.durationSeconds}"}
   }
   ITEM
+
+  lifecycle {
+    ignore_changes = [item]
+  }
 }
