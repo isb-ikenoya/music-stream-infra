@@ -5,5 +5,5 @@ output "owner" {
 
 output "project" {
   description = "プロジェクト名"
-  value       = "web-daw"
+  value       = "music-stream"
 }
