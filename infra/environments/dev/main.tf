@@ -37,3 +37,13 @@ module "acm" {
 
   depends_on = [module.route53]
 }
+
+module "cloud_front" {
+  source = "../../modules/cloudfront"
+
+  owner               = local.owner
+  env                 = local.env
+  project             = local.project
+  acm_certificate_arn = module.acm.certificate_arn
+  aliase_domain       = var.domain
+}
