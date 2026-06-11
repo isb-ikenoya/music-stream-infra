@@ -38,6 +38,7 @@ resource "aws_cloudfront_distribution" "this" {
   origin {
     domain_name = "${local.sam_api_gateway_id}.execute-api.ap-northeast-1.amazonaws.com"
     origin_id   = "APIGatewayOrigin"
+    origin_path = "/Prod"
 
     custom_origin_config {
       http_port              = 80
