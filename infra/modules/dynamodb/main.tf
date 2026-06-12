@@ -39,7 +39,7 @@ resource "aws_dynamodb_table_item" "initial_songs_data" {
 
   item = jsonencode(each.value)
 
-  lifecycle {
+  /*lifecycle {
     ignore_changes = [item]
-  }
+  }*/
 }
