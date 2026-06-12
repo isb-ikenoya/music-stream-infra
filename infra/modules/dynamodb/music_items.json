@@ -1,0 +1,16 @@
+[
+  {
+    "songId": { "S": "song_000001" },
+    "songName": { "S": "Test Song1" },
+    "artistId": { "S": "artist_000001" },
+    "audioS3Key": { "S": "tracks/system/test1.mp3" },
+    "durationSeconds": { "N": "180" }
+  },
+  {
+    "songId": { "S": "song_000002" },
+    "songName": { "S": "Test Song2" },
+    "artistId": { "S": "artist_000001" },
+    "audioS3Key": { "S": "tracks/system/test2.mp3" },
+    "durationSeconds": { "N": "120" }
+  }
+]
