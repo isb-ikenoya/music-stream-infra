@@ -61,7 +61,7 @@ resource "aws_cloudfront_distribution" "this" {
     domain_name = var.music_streaming_s3_domain_name
     origin_id   = "music-streaming-s3-origin"
 
-    origin_access_control_id = aws_cloudfront_origin_access_control.oac
+    origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
   }
 
   # デフォルトのキャッシュビヘイビアをAPI Gatewayに向ける
@@ -100,6 +100,28 @@ resource "aws_cloudfront_distribution" "this" {
     response_page_path = "/index.html" # SPAのルーティング対応
   }*/
 
+}
+
+data "aws_iam_policy_document" "s3_policy" {
+  statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${var.music_streaming_s3_bucket_arn}/*"]
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [aws_cloudfront_distribution.this.arn]
+    }
+  }
+}
+
+# CloudFrontからのアクセスのみを許可するポリシー (OAC)
+resource "aws_s3_bucket_policy" "allow_cloudfront" {
+  bucket = var.music_streaming_s3_bucket_id
+  policy = data.aws_iam_policy_document.s3_policy.json
 }
 
 # CloudFrontのURLをRoute53に登録

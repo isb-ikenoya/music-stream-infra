@@ -27,3 +27,14 @@ variable "music_streaming_s3_domain_name" {
   description = "音楽配信用S3ドメイン名"
   type        = string
 }
+
+variable "music_streaming_s3_bucket_id" {
+  description = "音楽配信用S3バケットID"
+  type        = string
+}
+
+variable "music_streaming_s3_bucket_arn" {
+  description = "音楽配信用S3バケットarn"
+  type        = string
+}
+

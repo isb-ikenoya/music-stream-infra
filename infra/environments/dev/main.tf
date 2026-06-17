@@ -52,4 +52,6 @@ module "cloud_front" {
   acm_certificate_arn            = module.acm.certificate_arn
   aliase_domain                  = var.domain
   music_streaming_s3_domain_name = module.music-streaming-bucket.domain_name
+  music_streaming_s3_bucket_id   = module.music-streaming-bucket.bucket_id
+  music_streaming_s3_bucket_arn  = module.music-streaming-bucket.bucket_arn
 }
