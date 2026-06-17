@@ -14,6 +14,11 @@ module "dynamo-db" {
   owner  = local.owner
 }
 
+module "music-streaming-bucket" {
+  source = "../../modules/music-streaming-bucket"
+  owner  = local.owner
+}
+
 module "route53" {
   source        = "../../modules/route53"
   parent_domain = var.parent_domain
@@ -41,9 +46,12 @@ module "acm" {
 module "cloud_front" {
   source = "../../modules/cloudfront"
 
-  owner               = local.owner
-  env                 = local.env
-  project             = local.project
-  acm_certificate_arn = module.acm.certificate_arn
-  aliase_domain       = var.domain
+  owner                          = local.owner
+  env                            = local.env
+  project                        = local.project
+  acm_certificate_arn            = module.acm.certificate_arn
+  aliase_domain                  = var.domain
+  music_streaming_s3_domain_name = module.music-streaming-bucket.domain_name
+  music_streaming_s3_bucket_id   = module.music-streaming-bucket.bucket_id
+  music_streaming_s3_bucket_arn  = module.music-streaming-bucket.bucket_arn
 }
