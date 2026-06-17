@@ -8,6 +8,14 @@ locals {
   sam_api_gateway_id = data.aws_cloudformation_stack.sam_stack.outputs["TargetApiId"]
 }
 
+# ストリーミングバケットのアクセスコントロール
+resource "aws_cloudfront_origin_access_control" "oac" {
+  name                              = "music-oac"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
 # CloudFront
 resource "aws_cloudfront_distribution" "this" {
   # 基本設定
@@ -48,6 +56,14 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
+  # 音楽ストリーミング用S3
+  origin {
+    domain_name = var.music_streaming_s3_domain_name
+    origin_id   = "music-streaming-s3-origin"
+
+    origin_access_control_id = aws_cloudfront_origin_access_control.oac
+  }
+
   # デフォルトのキャッシュビヘイビアをAPI Gatewayに向ける
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
@@ -64,11 +80,11 @@ resource "aws_cloudfront_distribution" "this" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
-    # APIなので基本はキャッシュさせない設定
-    min_ttl     = 0
-    default_ttl = 0
-    max_ttl     = 0
-    compress    = true
+
+    # APIはキャッシュ無効
+    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+
+    compress = true
   }
 
   # 証明書

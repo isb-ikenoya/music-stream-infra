@@ -22,3 +22,8 @@ variable "aliase_domain" {
   description = "代替ドメイン"
   type        = string
 }
+
+variable "music_streaming_s3_domain_name" {
+  description = "音楽配信用S3ドメイン名"
+  type        = string
+}
