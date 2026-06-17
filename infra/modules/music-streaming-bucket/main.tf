@@ -15,25 +15,3 @@ resource "aws_s3_bucket_public_access_block" "music_bucket_block" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
-
-data "aws_iam_policy_document" "s3_policy" {
-  statement {
-    actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.music_bucket.arn}/*"]
-    principals {
-      type        = "Service"
-      identifiers = ["cloudfront.amazonaws.com"]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "AWS:SourceArn"
-      values   = [aws_cloudfront_distribution.main.arn]
-    }
-  }
-}
-
-# CloudFrontからのアクセスのみを許可するポリシー (OAC)
-resource "aws_s3_bucket_policy" "allow_cloudfront" {
-  bucket = aws_s3_bucket.music_bucket.id
-  policy = data.aws_iam_policy_document.s3_policy.json
-}
