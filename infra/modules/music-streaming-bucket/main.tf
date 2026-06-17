@@ -1,6 +1,11 @@
+# ランダムIDを生成（例: 8桁の16進数）
+resource "random_id" "bucket_suffix" {
+  byte_length = 4 # 4バイト = 8桁の16進数
+}
+
 # 音楽ファイル格納用バケット
 resource "aws_s3_bucket" "music_bucket" {
-  bucket = "music-streaming-bucket"
+  bucket = "music-streaming-bucket-${random_id.bucket_suffix.hex}"
   tags = {
     "created_by" = var.owner
   }
