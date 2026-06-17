@@ -73,9 +73,23 @@ resource "aws_cloudfront_distribution" "this" {
     viewer_protocol_policy = "redirect-to-https"
 
     # APIはキャッシュ無効
-    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Managed-CachingDisabled
 
     compress = true
+  }
+
+  # S3用
+  ordered_cache_behavior {
+    path_pattern     = "/music/*"
+    target_origin_id = "music-streaming-s3-origin"
+
+    # S3配信はキャッシュを有効にする (推奨される管理ポリシー)
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" # Managed-CachingOptimized
+
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
   }
 
   # 証明書
