@@ -70,15 +70,6 @@ resource "aws_cloudfront_distribution" "this" {
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "APIGatewayOrigin"
 
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "all"
-      }
-      # 重要：Hostヘッダーは含めない（API Gatewayが自身のURL以外を拒否するため）
-      headers = ["Accept", "Authorization", "Content-Type"]
-    }
-
     viewer_protocol_policy = "redirect-to-https"
 
     # APIはキャッシュ無効
