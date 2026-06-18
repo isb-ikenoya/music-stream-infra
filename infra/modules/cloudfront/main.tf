@@ -16,6 +16,7 @@ resource "aws_cloudfront_origin_access_control" "oac" {
   signing_protocol                  = "sigv4"
 }
 
+# リクエストポリシー
 resource "aws_cloudfront_origin_request_policy" "api_key_forwarding" {
   name = "api-key-forwarding-policy"
   headers_config {
@@ -25,7 +26,7 @@ resource "aws_cloudfront_origin_request_policy" "api_key_forwarding" {
     }
   }
   cookies_config {
-    cookie_behavior = "none"
+    cookie_behavior = "all" # 全てのCookieを転送
   }
   query_strings_config {
     query_string_behavior = "all"
@@ -144,6 +145,17 @@ data "aws_iam_policy_document" "s3_policy" {
 resource "aws_s3_bucket_policy" "allow_cloudfront" {
   bucket = var.music_streaming_s3_bucket_id
   policy = data.aws_iam_policy_document.s3_policy.json
+}
+
+# Cookie用の公開鍵
+resource "aws_cloudfront_public_key" "this" {
+  name        = "music-stream-public-key"
+  encoded_key = file("./music-stream-public_key.pem") # ローカルの公開鍵を指定
+}
+
+resource "aws_cloudfront_key_group" "this" {
+  name  = "music-stream-key-group"
+  items = [aws_cloudfront_public_key.this.id]
 }
 
 # CloudFrontのURLをRoute53に登録
