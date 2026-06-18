@@ -150,7 +150,7 @@ resource "aws_s3_bucket_policy" "allow_cloudfront" {
 # Cookie用の公開鍵
 resource "aws_cloudfront_public_key" "this" {
   name        = "music-stream-public-key"
-  encoded_key = file("./music-stream-public_key.pem") # ローカルの公開鍵を指定
+  encoded_key = file("${path.module}/music-stream-public_key.pem") # ローカルの公開鍵を指定
 }
 
 resource "aws_cloudfront_key_group" "this" {
