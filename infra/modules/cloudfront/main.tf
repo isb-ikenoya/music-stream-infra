@@ -16,6 +16,22 @@ resource "aws_cloudfront_origin_access_control" "oac" {
   signing_protocol                  = "sigv4"
 }
 
+resource "aws_cloudfront_origin_request_policy" "api_key_forwarding" {
+  name = "api-key-forwarding-policy"
+  headers_config {
+    header_behavior = "whitelist"
+    headers {
+      items = ["x-api-key"] # APIキーヘッダーの転送を許可
+    }
+  }
+  cookies_config {
+    cookie_behavior = "none"
+  }
+  query_strings_config {
+    query_string_behavior = "all"
+  }
+}
+
 # CloudFront
 resource "aws_cloudfront_distribution" "this" {
   # 基本設定
@@ -73,7 +89,8 @@ resource "aws_cloudfront_distribution" "this" {
     viewer_protocol_policy = "redirect-to-https"
 
     # APIはキャッシュ無効
-    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Managed-CachingDisabled
+    cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Managed-CachingDisabled
+    origin_request_policy_id = aws_cloudfront_origin_request_policy.api_key_forwarding.id
 
     compress = true
   }
