@@ -33,6 +33,18 @@ resource "aws_cloudfront_origin_request_policy" "api_key_forwarding" {
   }
 }
 
+# Cookie用の公開鍵
+resource "aws_cloudfront_public_key" "this" {
+  name        = "music-stream-public-key"
+  encoded_key = file("${path.module}/music-stream-public_key.pem") # ローカルの公開鍵を指定
+}
+
+# キーグループ
+resource "aws_cloudfront_key_group" "this" {
+  name  = "music-stream-key-group"
+  items = [aws_cloudfront_public_key.this.id]
+}
+
 # CloudFront
 resource "aws_cloudfront_distribution" "this" {
   # 基本設定
@@ -104,6 +116,9 @@ resource "aws_cloudfront_distribution" "this" {
     # S3配信はキャッシュを有効にする (推奨される管理ポリシー)
     cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" # Managed-CachingOptimized
 
+    # Cookie制限
+    trusted_key_groups = [aws_cloudfront_key_group.this.id]
+
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
@@ -145,17 +160,6 @@ data "aws_iam_policy_document" "s3_policy" {
 resource "aws_s3_bucket_policy" "allow_cloudfront" {
   bucket = var.music_streaming_s3_bucket_id
   policy = data.aws_iam_policy_document.s3_policy.json
-}
-
-# Cookie用の公開鍵
-resource "aws_cloudfront_public_key" "this" {
-  name        = "music-stream-public-key"
-  encoded_key = file("${path.module}/music-stream-public_key.pem") # ローカルの公開鍵を指定
-}
-
-resource "aws_cloudfront_key_group" "this" {
-  name  = "music-stream-key-group"
-  items = [aws_cloudfront_public_key.this.id]
 }
 
 # CloudFrontのURLをRoute53に登録
